@@ -1,0 +1,102 @@
+noti:
+  data:
+    title: เงินเข้า {amount} บาท
+    body: จาก {fromAccountName} วันที่ {txnDateTime}
+    priority: high
+    dry-run: false
+    time-to-live: 2400000
+    content-available: false
+thread:
+  executor:
+    core-pool-size: 10
+    max-pool-size: 10
+spring:
+  jackson:
+    date-format: dd/MM/yyyy HH:mm:ss
+  profiles:
+    active: dev
+    include: version
+  datasource:
+    url: jdbc:mysql://34.126.170.236:3306/tungngern_ycyd
+    jdbc-url: jdbc:mysql://34.126.170.236:3306/tungngern_ycyd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: tungngern-ycyd
+    password: P@ssw0rd
+  jpa:
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.cfg.EJB3NamingStrategy
+        physical-strategy: org.hibernate.cfg.EJB3NamingStrategy
+    show-sql: true        
+  kafka:
+    consumer:
+      topic:
+        topic-ycyd-payment-result: paotang.ycyd.fct.pay-success.0
+        topic-retry: tn.ycyd.pay-result.retry
+      max-poll-record: 100
+      max-poll-interval: 360000
+      bootstrap-servers: msg.cmmnent.dev.gcp.ktbcloud:19092
+#      paotang-bootstrap-servers: 10.249.91.4:19092
+#      tungnern-bootstrap-servers: tungngern-msg-1.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-2.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-3.cmmnent.uat.gcp.ktbcloud:19092
+      paotangBootstrapServers: localhost:9092
+      tungnernBootstrapServers: localhost:9092
+      group-id: tn_ycyd_log
+      group-id-retry: tn_ycyd_log_retry
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      security:
+        protocol: SASL_SSL
+      properties:
+        sasl:
+          jaas:
+            config: org.apache.kafka.common.security.plain.PlainLoginModule required username="msg_paotang" password="paotang1234";
+            config-tn: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_tungngern" password="NnbKxYNrgUNN";
+          mechanism: PLAIN
+      ssl:
+        trust-store-location: /Users/purit/Desktop/thungngern/tn-ycyd-listener-payment-result/helm/kafka.paotang.truststore.jks
+        trust-store-password: adminkafka
+        trust-store-type: JKS
+        endpoint:
+          identification:
+            algorithm: ""
+      ssl-tn:
+        trust-store-location: /Users/purit/Desktop/thungngern/tn-ycyd-listener-payment-result/helm/tungngern.jks
+        trust-store-password: P@00word
+        trust-store-type: JKS
+    producer:
+      topic:
+        topic-notification: tn.notification.cloud
+        topic-retry: tn.ycyd.pay-result.retry
+        topic-pay-result: PayResult
+      bootstrap-servers: localhost:9092
+#      bootstrapServers: tungngern-msg-1.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-2.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-3.cmmnent.uat.gcp.ktbcloud:19092
+      group-id: tn_ycyd_log
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      security:
+        protocol: SASL_SSL
+      properties:
+        sasl:
+          jaas:
+            config: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_tungngern" password="NnbKxYNrgUNN";
+#            config: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_paotang" password="Paotang1234";
+          mechanism: PLAIN
+      ssl:
+        trust-store-location: /Users/purit/Desktop/thungngern/tn-ycyd-listener-payment-result/helm/tungngern.jks
+        trust-store-password: P@00word
+        trust-store-type: JKS
+redis:
+  profile:
+    host: localhost
+    port: 6379
+    database:
+      index: 0
+    lettuce:
+      pool:
+        maxActive: 10
+        minIdle: 10
+        maxIdle: 10
+        maxWait: 0
+logging:
+  level:
+    org.apache.kafka: ERROR

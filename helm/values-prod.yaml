@@ -1,0 +1,167 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 8
+
+image:
+  repository: asia.gcr.io/tungngern-uat-307003/tungngern/tn-ycyd-listener-payment-result
+  tag: ""
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  default:
+    port: 80
+    name: http
+    target: http
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  limits:
+    cpu: "0.5"
+    memory: 768Mi
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+#application.yaml
+server:
+  port: 9700
+
+redis:
+  profile:
+    host: 10.61.160.28
+    port: 6379
+    database:
+      index: 0
+    lettuce:
+      pool:
+        maxActive: 10
+        minIdle: 10
+        maxIdle: 10
+        maxWait: 0
+thread:
+  executor:
+    corePoolSize: 5
+    maxPoolSize: 5
+spring:
+  datasource:
+    url: jdbc:mysql://10.61.162.29:3306/tungngern_ycyd
+    jdbcurl: jdbc:mysql://10.61.162.29:3306/tungngern_ycyd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: appusr
+    password: ftGztOf20E7MBleD
+  kafka:
+    consumer:
+      topic:
+        topicYCYDTxn: paotang.ycyd.fct.pay-success.0
+        topicRetry: tn.ycyd.pay-result.retry
+        topicPepYcyd: tn-pep-ycyd
+      maxPollRecords: 10
+      maxPollInterval: 120000
+      bootstrapServers: msg.cmmnent.dev.gcp.ktbcloud:19092
+      #      paotangBootstrapServers: broker1.cmmn-ent.nonprod.gcp.ktbcloud:19092,broker2.cmmn-ent.nonprod.gcp.ktbcloud:19092,broker3.cmmn-ent.nonprod.gcp.ktbcloud:19092
+      paotangBootstrapServers: paotang-msg-1.cmmnent.prod.gcp.ktbcloud:19092,paotang-msg-2.cmmnent.prod.gcp.ktbcloud:19092,paotang-msg-3.cmmnent.prod.gcp.ktbcloud:19092,paotang-msg-4.cmmnent.prod.gcp.ktbcloud:19092,paotang-msg-5.cmmnent.prod.gcp.ktbcloud:19092
+      tungnernBootstrapServers: tungngern-msg-1.cmmnent.prod.gcp.ktbcloud:19092,tungngern-msg-2.cmmnent.prod.gcp.ktbcloud:19092,tungngern-msg-3.cmmnent.prod.gcp.ktbcloud:19092
+      tungnernInternalServers: tungngern-internal-msg1.tungngern.prod.gcp.external:19092,tungngern-internal-msg2.tungngern.prod.gcp.external:19092,tungngern-internal-msg3.tungngern.prod.gcp.external:19092
+      groupId: tn_ycyd_log
+      groupIdRetry: tn_ycyd_log_retry
+      groupIdPepYcyd: tn_pep_ycyd_log
+      keyDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      valueDeserializer: org.apache.kafka.common.serialization.StringDeserializer
+      security:
+        protocol: SASL_SSL
+      properties:
+        sessionTimeoutMs: 60000
+        sasl:
+          jaas:
+            #            config: org.apache.kafka.common.security.scram.ScramLoginModule required username="TGUSR" password="P@ssw0rd";
+            config: org.apache.kafka.common.security.plain.PlainLoginModule required username="msg_paotang" password="VOjuMahfUHkEcL";
+            configTn: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_tungngern" password="TGnNnbKxYNrgUNN";
+            configTnInternal: org.apache.kafka.common.security.scram.ScramLoginModule required username="scpmsg_tungngern_internal" password="nxBtT8ggL4nEag33";
+          mechanism: PLAIN
+          mechanismTnInternal: SCRAM-SHA-512
+      ssl:
+        trustStoreLocation: /cert/PROD/paotang-paotang.truststore.jks
+        trustStorePassword: adminkafka
+        trustStoreType: JKS
+        endpoint:
+          identification:
+            algorithm: ""
+      sslTn:
+        trustStoreLocation: /cert/PROD/tungngern.jks
+        trustStorePassword: P@00word
+        trustStoreType: JKS
+      sslTnInternal:
+        trustStoreLocationTnInternal: /cert/PROD/tungngerm-internal-prod.jks
+        trustStorePasswordInternal: adminkafka
+        trustStoreTypeInternal: JKS
+    producer:
+      topic:
+        topicNotification: tn.notification.cloud
+        topicRetry: tn.ycyd.pay-result.retry
+        topicPayResult: PayResult
+      bootstrapServers:  tungngern-msg-1.cmmnent.prod.gcp.ktbcloud:19092,tungngern-msg-2.cmmnent.prod.gcp.ktbcloud:19092,tungngern-msg-3.cmmnent.prod.gcp.ktbcloud:19092
+      groupId: tn_ycyd_log
+      keySerializer: org.apache.kafka.common.serialization.StringSerializer
+      valueSerializer: org.apache.kafka.common.serialization.StringSerializer
+      security:
+        protocol: SASL_SSL
+      properties:
+        sasl:
+          jaas:
+            config: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_tungngern" password="TGnNnbKxYNrgUNN";
+          mechanism: PLAIN
+      ssl:
+        trustStoreLocation: /cert/PROD/tungngern.jks
+        trustStorePassword: P@00word
+        trustStoreType: JKS

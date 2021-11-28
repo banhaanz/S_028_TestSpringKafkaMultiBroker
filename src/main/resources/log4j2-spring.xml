@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30">
+    <Properties>
+        <Property name="log-path">applog/tungngern-api/internal</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>
+                    [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+                </pattern>
+            </PatternLayout>
+        </Console>
+        <RollingFile name="AllLog" fileName="${log-path}/all.log"
+            filePattern="${log-path}/all-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingFile>      
+        <RollingFile name="DailyRollingLog" fileName="${log-path}/tn-ycyd-listener-payment-result.log"
+            filePattern="${log-path}/tn-ycyd-listener-payment-result-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.springframework.core" additivity="false">
+            <AppenderRef ref="AllLog" />
+        </Logger>
+        <Logger name="org.springframework.boot" additivity="false">
+            <AppenderRef ref="AllLog" />
+        </Logger>
+        <Logger name="com.ktb.tungngern.ycyd.tnycydlistenerpaymentresult" additivity="false">
+            <AppenderRef ref="DailyRollingLog"/>
+            <AppenderRef ref="Console-Appender" />
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console-Appender" />
+        </Root>
+    </Loggers>
+</Configuration>

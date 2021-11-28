@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tn-ycyd-listener-payment-result
+data:
+  application.yml: |-
+    server:
+      port: {{ .Values.server.port }}
+    noti:
+      data:
+        title:  เงินเข้า {amount} บาท
+        body: จาก {fromAccountName} วันที่ {txnDateTime}
+        priority:  high
+        dry-run:  false
+        time-to-live: 2400000
+        content-available:  false
+    redis:
+      profile:
+        host: {{ .Values.redis.profile.host }}
+        port: {{ .Values.redis.profile.port }}
+        database:
+          index: {{ .Values.redis.profile.database.index }}
+        lettuce:
+          pool:
+            max-active: {{ .Values.redis.profile.lettuce.pool.maxActive }}
+            max-idle: {{ .Values.redis.profile.lettuce.pool.maxIdle }}
+            min-idle: {{ .Values.redis.profile.lettuce.pool.minIdle }}
+            max-wait: {{ .Values.redis.profile.lettuce.pool.maxWait }}
+    spring:
+      jackson:
+        date-format:  dd/MM/yyyy HH:mm:ss
+      datasource:
+        url: {{ .Values.spring.datasource.url }}
+        jdbc-url: {{ .Values.spring.datasource.jdbcurl }}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: {{ .Values.spring.datasource.username }}
+        password: {{ .Values.spring.datasource.password }}
+      kafka:
+        consumer:
+          topic:
+            topic-ycyd-payment-result: {{ .Values.spring.kafka.consumer.topic.topicYCYDTxn }}
+            topic-retry: {{ .Values.spring.kafka.consumer.topic.topicRetry }}
+            topic-pep-ycyd: {{ .Values.spring.kafka.consumer.topic.topicPepYcyd }}
+          max-poll-records: {{ .Values.spring.kafka.consumer.maxPollRecords }}
+          max-poll-interval: {{ .Values.spring.kafka.consumer.maxPollInterval }}
+          paotang-bootstrap-servers: {{ .Values.spring.kafka.consumer.paotangBootstrapServers }}
+          tungnern-bootstrap-servers: {{ .Values.spring.kafka.consumer.tungnernBootstrapServers }}
+          tungnern-internal-servers: {{ .Values.spring.kafka.consumer.tungnernInternalServers }}
+          group-id: {{ .Values.spring.kafka.consumer.groupId }}
+          group-id-retry: {{ .Values.spring.kafka.consumer.groupIdRetry }}
+          group-id-pep-ycyd: {{ .Values.spring.kafka.consumer.groupIdPepYcyd }}
+          key-deserializer: {{ .Values.spring.kafka.consumer.keyDeserializer }}
+          value-deserializer: {{ .Values.spring.kafka.consumer.valueDeserializer }}
+          security:
+            protocol: {{ .Values.spring.kafka.consumer.security.protocol }}
+          properties:
+            sasl:
+              jaas:
+                config: {{ .Values.spring.kafka.consumer.properties.sasl.jaas.config }}
+                config-tn: {{ .Values.spring.kafka.consumer.properties.sasl.jaas.configTn }}
+                config-tn-internal: {{ .Values.spring.kafka.consumer.properties.sasl.jaas.configTnInternal }}
+              mechanism: {{ .Values.spring.kafka.consumer.properties.sasl.mechanism }}
+              mechanism-tn-internal: {{ .Values.spring.kafka.consumer.properties.sasl.mechanismTnInternal }}
+            session.timeout.ms: {{ .Values.spring.kafka.consumer.properties.sessionTimeoutMs }}
+          ssl:
+            trust-store-location: {{ .Values.spring.kafka.consumer.ssl.trustStoreLocation }}
+            trust-store-password: {{ .Values.spring.kafka.consumer.ssl.trustStorePassword }}
+            trust-store-type: {{ .Values.spring.kafka.consumer.ssl.trustStoreType }}
+            endpoint:
+              identification:
+                algorithm: {{ .Values.spring.kafka.consumer.ssl.endpoint.identification.algorithm }}
+          ssl-tn:
+            trust-store-location: {{ .Values.spring.kafka.consumer.sslTn.trustStoreLocation }}
+            trust-store-password: {{ .Values.spring.kafka.consumer.sslTn.trustStorePassword }}
+            trust-store-type: {{ .Values.spring.kafka.consumer.sslTn.trustStoreType }}
+          ssl-tn-internal:
+            trust-store-location: {{ .Values.spring.kafka.consumer.sslTnInternal.trustStoreLocationTnInternal }}
+            trust-store-password: {{ .Values.spring.kafka.consumer.sslTnInternal.trustStorePasswordInternal }}
+            trust-store-type: {{ .Values.spring.kafka.consumer.sslTnInternal.trustStoreTypeInternal }}
+        producer:
+          topic:
+            topic-notification: {{ .Values.spring.kafka.producer.topic.topicNotification }}
+            topic-retry: {{ .Values.spring.kafka.producer.topic.topicRetry }}
+            topic-pay-result: {{ .Values.spring.kafka.producer.topic.topicPayResult }}
+          bootstrap-servers: {{ .Values.spring.kafka.producer.bootstrapServers }}
+          tungnern-internal-servers: {{ .Values.spring.kafka.producer.tungnernInternalServers }}
+          group-id: {{ .Values.spring.kafka.producer.groupId }}
+          key-serializer: {{ .Values.spring.kafka.producer.keySerializer }}
+          value-serializer: {{ .Values.spring.kafka.producer.valueSerializer }}
+          security:
+            protocol: {{ .Values.spring.kafka.producer.security.protocol }}
+          properties:
+            sasl:
+              jaas:
+                config: {{ .Values.spring.kafka.producer.properties.sasl.jaas.config }}
+                config-tn-internal: {{ .Values.spring.kafka.producer.properties.sasl.jaas.configTnInternal }}
+              mechanism: {{ .Values.spring.kafka.producer.properties.sasl.mechanism }}
+              mechanism-tn-internal: {{ .Values.spring.kafka.producer.properties.sasl.mechanismTnInternal }}
+          ssl:
+            trust-store-location: {{ .Values.spring.kafka.producer.ssl.trustStoreLocation }}
+            trust-store-password: {{ .Values.spring.kafka.producer.ssl.trustStorePassword }}
+            trust-store-type: {{ .Values.spring.kafka.producer.ssl.trustStoreType }}
+          ssl-tn-internal:
+            trust-store-location: {{ .Values.spring.kafka.producer.sslTnInternal.trustStoreLocationTnInternal }}
+            trust-store-password: {{ .Values.spring.kafka.producer.sslTnInternal.trustStorePasswordInternal }}
+            trust-store-type: {{ .Values.spring.kafka.producer.sslTnInternal.trustStoreTypeInternal }}
+    thread:
+      executor:
+        core-pool-size: {{ .Values.thread.executor.corePoolSize }}
+        max-pool-size: {{ .Values.thread.executor.maxPoolSize }}
+    logging:
+      level:
+        org.apache.kafka: ERROR
+        org.springframework: INFO
+        com.ktb.tungngern.ycyd.tnycydlistenerpaymentresult: INFO
+        
