@@ -36,8 +36,6 @@ spring:
       max-poll-record: 100
       max-poll-interval: 360000
       bootstrap-servers: msg.cmmnent.dev.gcp.ktbcloud:19092
-#      paotang-bootstrap-servers: 10.249.91.4:19092
-#      tungnern-bootstrap-servers: tungngern-msg-1.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-2.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-3.cmmnent.uat.gcp.ktbcloud:19092
       paotangBootstrapServers: localhost:9092
       tungnernBootstrapServers: localhost:9092
       group-id: tn_ycyd_log
@@ -69,7 +67,6 @@ spring:
         topic-retry: tn.ycyd.pay-result.retry
         topic-pay-result: PayResult
       bootstrap-servers: localhost:9092
-#      bootstrapServers: tungngern-msg-1.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-2.cmmnent.uat.gcp.ktbcloud:19092,tungngern-msg-3.cmmnent.uat.gcp.ktbcloud:19092
       group-id: tn_ycyd_log
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -79,7 +76,6 @@ spring:
         sasl:
           jaas:
             config: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_tungngern" password="NnbKxYNrgUNN";
-#            config: org.apache.kafka.common.security.scram.ScramLoginModule required username="msg_paotang" password="Paotang1234";
           mechanism: PLAIN
       ssl:
         trust-store-location: /Users/purit/Desktop/thungngern/tn-ycyd-listener-payment-result/helm/tungngern.jks
