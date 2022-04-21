@@ -8,10 +8,10 @@
 		<version>2.5.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ktb.tungngern.ycyd</groupId>
-	<artifactId>tn-ycyd-listener-payment-result</artifactId>
+	<groupId>com.test.demo</groupId>
+	<artifactId>S_028_TestSpringKafkaMultiBroker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tn-ycyd-listener-payment-result</name>
+	<name>S_028_TestSpringKafkaMultiBroker</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
